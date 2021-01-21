@@ -34,18 +34,29 @@
    "hash_type": ""
 }
 ```
-   3. "cell_deps": 需要依赖的cell列表，内容都是cell格式，参考后面说明
-   4. "inputs"：输入的cell列表
-   5. "outputs"：输入的cell列表
-   6. cell格式：
+   3. "block_list":区块信息，合约如果没用到，不需要配置，可以配置多个block
+      1. "number": 3684151, 将作为配置的key，后续cell将使用block_id引用它的值
+      2. "timestamp": 1611050871052,
+      3. "epoch": 2564,
+      4. "compact_target":0,
+      5. "parent_hash":"",
+      6. "transactions_root":"",
+      7. "proposals_hash":"",
+      8. "uncles_hash":"",
+      9. "dao":""
+   4.  "cell_deps": 需要依赖的cell列表，内容都是cell格式，参考后面说明
+   5. "inputs"：输入的cell列表
+   6. "outputs"：输入的cell列表
+   7. cell格式：
       1. capacity：ckb的capacity
       2. lock_script：lock脚本，如果没有要求，"code_hash"设置为"{{always_success}}"就可以
       3. type_script：根据自己的业务场景，设置参数
          1. "code_hash": "{{index}}",引用项目中的index脚本，需要在前面的contracts里配置，也可以直接填写具体的hex字符串
          2. "args": "1234{{index_hash}}abcd{{index2_hash}}",可以填写具体的值(hex)，也可以填写前面的script_hash或contracts;
          3. hash_type:默认为空(data)，可以设置为data或type
-      4. data: cell的data
-      5. out_point：可以指定；如果为"",将使用随机的值。该值在output中不生效。
+      4. data: cell的data，16进制字符串，可以类似args，引用script_hash或contracts
+      5. block_id:3684151，cell所属区块，如果script读取header，才需要配置。
+      6. out_point：可以指定；如果为"",将使用随机的值。该值在output中不生效。
 ```json
 {
    "capacity": 1000,

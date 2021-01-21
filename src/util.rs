@@ -2,10 +2,8 @@
 #![allow(dead_code)]
 
 use super::*;
-use ckb_testtool::context::Context;
-use ckb_tool::ckb_types::{
-    bytes::Bytes, packed::*, prelude::*, 
-};
+use ckb_testtool::context::{random_hash, Context};
+use ckb_tool::ckb_types::{bytes::Bytes, packed::*, prelude::*};
 use std::error::Error;
 
 pub fn hex_to_bytes(input: &str) -> Result<Bytes, Box<dyn Error>> {
@@ -29,12 +27,43 @@ pub fn hex_to_byte32(input: &str) -> Result<Byte32, Box<dyn Error>> {
     Ok(Byte32::new_builder().set(inner).build())
 }
 
+pub fn hex_try_to_byte32(input: &str) -> Result<Byte32, Box<dyn Error>> {
+    if input.len() == 0 {
+        return Ok(random_hash());
+    }
+    let hex = input.trim_start_matches("0x");
+    let data = hex::decode(hex)?
+        .into_iter()
+        .map(Byte::new)
+        .collect::<Vec<_>>();
+    let mut inner = [Byte::new(0); 32];
+    inner.copy_from_slice(&data);
+
+    Ok(Byte32::new_builder().set(inner).build())
+}
+
 pub fn hex_to_u64(input: &str) -> Result<u64, Box<dyn Error>> {
     let hex = input.trim_start_matches("0x");
     if hex == "" {
         Ok(0u64)
     } else {
         Ok(u64::from_str_radix(hex, 16)?)
+    }
+}
+
+pub fn u32_to_uint32(val: u32) -> Uint32 {
+    let buf = val.to_le_bytes();
+    match Uint32::from_slice(&buf[..]) {
+        Ok(v) => v,
+        _ => Uint32::default(),
+    }
+}
+
+pub fn u64_to_uint64(val: u64) -> Uint64 {
+    let buf = val.to_le_bytes();
+    match Uint64::from_slice(&buf[..]) {
+        Ok(v) => v,
+        _ => Uint64::default(),
     }
 }
 
